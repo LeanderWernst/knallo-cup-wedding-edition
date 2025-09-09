@@ -3,7 +3,7 @@
     font-family: 'Outfit';
     font-style: normal;
     font-weight: 400;
-    src: url('../fonts/outfit-v15-latin-regular.woff2') format('woff2');
+    src: url('./fonts/outfit-v15-latin-regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -11,7 +11,7 @@
     font-family: 'Bangers';
     font-style: normal;
     font-weight: 400;
-    src: url('../fonts/bangers-v24-latin-regular.woff2') format('woff2');
+    src: url('./fonts/bangers-v24-latin-regular.woff2') format('woff2');
 }
 
 @font-face {
@@ -19,7 +19,7 @@
     font-family: 'Fuzzy Bubbles';
     font-style: normal;
     font-weight: 400;
-    src: url('../fonts/fuzzy-bubbles-v8-latin-regular.woff2') format('woff2');
+    src: url('./fonts/fuzzy-bubbles-v8-latin-regular.woff2') format('woff2');
 }
 
 :root {
