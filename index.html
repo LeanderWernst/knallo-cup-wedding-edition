@@ -159,6 +159,7 @@
                         const apiOk = !!window.hcaptcha;
                         const iframeOk = !!document.querySelector('.h-captcha iframe');
                         this.captchaError = !(apiOk || iframeOk);
+                        this.adjustBodyPadding();
                     },
                     attachCaptchaSubmitGuard() {
                         this.$nextTick(() => {
@@ -181,7 +182,7 @@
                             const rect = el.getBoundingClientRect();
                             maxHeight = Math.max(maxHeight, rect.height);
                         });
-                        document.body.style.paddingBottom = `${maxHeight + 12}px`;
+                        document.body.style.paddingBottom = `${maxHeight + 0}px`;
                     }
                 },
                 mounted() {
