@@ -172,6 +172,16 @@
                                 }
                             });
                         });
+                    },
+                    adjustBodyPadding() {
+                        const corners = document.querySelectorAll('.corner-art.corner-left, .corner-art.corner-right');
+                        let maxHeight = 0;
+
+                        corners.forEach(el => {
+                            const rect = el.getBoundingClientRect();
+                            maxHeight = Math.max(maxHeight, rect.height);
+                        });
+                        document.body.style.paddingBottom = `${maxHeight + 12}px`;
                     }
                 },
                 mounted() {
@@ -195,6 +205,11 @@
                         if (e.key === 'Escape' && this.showOverlay) this.closeOverlay();
                     });
                     this.attachCaptchaSubmitGuard();
+                    this.adjustBodyPadding();
+                    window.addEventListener('resize', this.adjustBodyPadding);
+                },
+                beforeUnmount() {
+                    window.removeEventListener('resize', this.adjustBodyPadding);
                 }
             })
                 .use(i18n)
