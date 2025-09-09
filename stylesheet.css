@@ -30,6 +30,10 @@
     box-sizing: border-box;
 }
 
+html {
+    border: 20px solid #f49d8a;
+}
+
 html,
 body {
     margin: 0;
@@ -44,7 +48,7 @@ body {
     min-height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr;
-    border: 20px solid #f49d8a;
+    box-sizing: border-box;
 }
 
 p {
