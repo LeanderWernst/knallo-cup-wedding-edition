@@ -1,0 +1,39 @@
+{
+    "title": "Submit a Game",
+    "subject": "New Knallo-Cup Game!",
+    "fields": {
+        "gameName": {
+            "label": "Game Name",
+            "ph": "The name of the game"
+        },
+        "description": {
+            "label": "Description",
+            "ph": "Short description/rules of the game..."
+        },
+        "ideaBy": {
+            "label": "Idea by",
+            "ph": "Your name"
+        },
+        "mode": {
+            "label": "Game Mode",
+            "options": {
+                "direct": "1 vs. 1",
+                "group": "Group Game"
+            }
+        }
+    },
+    "actions": {
+        "submit": "Submit Game",
+        "info": "Info"
+    },
+    "overlay": {
+        "title": "Dear wedding guests,",
+        "close": "Close",
+        "body": "For almost 15 years, we have been playing a game with Lennart that we call “Knallo-Cup” among friends (long story…). The idea of the game is to compete one-on-one or in groups, complete challenges, and score points for your respective team. A points and dice system, including a game board, already exists.\nWhat’s missing? The games themselves – and that’s where we need you! Any idea is welcome, whether it’s balancing bottles on your forehead, reciting the alphabet backwards, or – with the utmost seriousness – skillfully sending a paper airplane into your opponent’s open fly. Anything fun and creative has a place on the game cards.\n\nSo grab a card, give your game idea a name, describe the challenge, and at the same time send greetings to the bride and groom, who will receive a unique, interactive gift from the entire wedding party.\n\nBest regards,\nLeander and Lukas"
+    },
+    "switchTo": "DE",
+    "captcha": {
+        "blocked": "The captcha could not load. Please disable your ad/tracker blocker or allow “hcaptcha.com” so the form can be submitted.",
+        "required": "Please complete the captcha."
+    }
+}

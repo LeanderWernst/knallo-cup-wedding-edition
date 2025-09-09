@@ -1,0 +1,39 @@
+{
+    "title": "Spiel einreichen",
+    "subject": "Neues Knallo-Cup-Spiel!",
+    "fields": {
+        "gameName": {
+            "label": "Spielname",
+            "ph": "Name des Spiels"
+        },
+        "description": {
+            "label": "Beschreibung",
+            "ph": "Kurzbeschreibung/Regeln des Spiels..."
+        },
+        "ideaBy": {
+            "label": "Idee von",
+            "ph": "Dein Name/Eure Namen"
+        },
+        "mode": {
+            "label": "Spielmodus",
+            "options": {
+                "direct": "Direktspiel (1 vs. 1)",
+                "group": "Gruppenspiel"
+            }
+        }
+    },
+    "actions": {
+        "submit": "Spiel absenden",
+        "info": "Info"
+    },
+    "overlay": {
+        "title": "Liebe Hochzeitsgäste,",
+        "close": "Schließen",
+        "body": "seit fast 15 Jahren spielen wir mit Lennart zusammen ein Spiel, das wir im Freundeskreis „Knallo-Cup“ nennen (lange Geschichte...). Bei diesem Spiel geht es darum, im Eins-gegen-Eins oder als Gruppe Spiele zu absolvieren und so Punkte für sein jeweiliges Team zu ergattern. Ein Punkte- und Würfelsystem inklusive Spielfeld ist bereits vorhanden.\nWas fehlt? Die Spiele - und dafür brauchen wir euch! Jede Idee ist erlaubt, ob Flaschen auf der Stirn balanciert werden, das Alphabet rückwärts gesprochen oder mit maximaler Ernsthaftigkeit ein Papierflieger geschickt im offenen Hosenstall des Kontrahenten platziert werden muss. Alles, was Spaß macht und kreativ ist, hat seinen Platz auf den Spielkarten.\n\nAlso schnappt euch eine Karte, gebt eurer Spielidee einen Namen, beschreibt das Spiel und schickt damit Grüesse an das Brautpaar, das so ein erlebbares Geschenk von der ganzen Hochzeitsgesellschaft erhält.\n\nLiebe Grüße\nLeander und Lukas"
+    },
+    "switchTo": "EN",
+    "captcha": {
+        "blocked": "Das Captcha konnte nicht geladen werden. Bitte deaktivieren Sie Ihren Werbe-/Tracking-Blocker oder erlauben Sie „hcaptcha.com“, damit das Formular abgesendet werden kann.",
+        "required": "Bitte Captcha ausfüllen."
+    }
+}

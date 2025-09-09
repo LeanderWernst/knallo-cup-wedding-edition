@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="stylesheet.css">
+    <title>Knallo-Cup | Wedding-Edition</title>
+</head>
+
+<body>
+    <div id="app">
+        <template v-if="i18nReady">
+            <div class="lang-switch" aria-label="Sprache umschalten">
+                <button @click="toggleLocale">{{ nextLocaleLabel }}</button>
+            </div>
+
+            <main class="wrap">
+                <section class="card" role="region" aria-labelledby="form-title" @keydown.esc="closeOverlay">
+                    <div class="logo" aria-hidden="true"></div>
+                    <h1 id="form-title">{{ $t('title') }}</h1>
+
+                    <form id="gameForm" action="https://api.web3forms.com/submit" method="POST">
+                        <input type="hidden" name="access_key" value="c1119aea-90e3-4c51-bf99-c6ccc07488e2" />
+                        <input type="hidden" name="subject" :value="$t('subject')" />
+                        <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+
+                        <div>
+                            <label for="name">{{ $t('fields.gameName.label') }}</label>
+                            <input id="name" name="game_name" type="text" :placeholder="$t('fields.gameName.ph')"
+                                required />
+                        </div>
+
+                        <div>
+                            <label for="desc">{{ $t('fields.description.label') }}</label>
+                            <textarea id="desc" name="description" :placeholder="$t('fields.description.ph')"
+                                required></textarea>
+                        </div>
+
+                        <fieldset class="radio-group">
+                            <legend>{{ $t('fields.mode.label') }}</legend>
+
+                            <label class="radio">
+                                <input type="radio" name="mode" value="direct_1v1" required>
+                                <span>{{ $t('fields.mode.options.direct') }}</span>
+                            </label>
+
+                            <label class="radio">
+                                <input type="radio" name="mode" value="group">
+                                <span>{{ $t('fields.mode.options.group') }}</span>
+                            </label>
+                        </fieldset>
+
+                        <div>
+                            <label for="idea">{{ $t('fields.ideaBy.label') }}</label>
+                            <input id="idea" name="idea_by" type="text" :placeholder="$t('fields.ideaBy.ph')"
+                                required />
+                        </div>
+                        <div>
+                            <div class="h-captcha" data-sitekey="50b2fe65-b00b-4b9e-ad62-3ba471098be2"
+                                data-captcha="true" :data-lang="$i18n.locale"></div>
+                            <p v-if="captchaError" class="captcha-note" role="alert">
+                                {{ $t('captcha.blocked') }}
+                            </p>
+                        </div>
+                        <div class="actions">
+                            <button class="btn primary" type="submit">{{ $t('actions.submit') }}</button>
+                            <button class="btn ghost" type="button" @click="openOverlay" aria-haspopup="dialog"
+                                aria-controls="infoOverlay">{{ $t('actions.info') }}</button>
+                        </div>
+                    </form>
+                </section>
+            </main>
+
+            <div class="overlay" id="infoOverlay" role="dialog" aria-modal="true" :class="{ open: showOverlay }"
+                @click.self="closeOverlay">
+                <div class="overlay-panel" role="document">
+                    <div class="overlay-header">
+                        <h2 class="overlay-title" tabindex="-1" ref="overlayTitle">{{ $t('overlay.title') }}</h2>
+                        <button class="overlay-close" type="button" @click="closeOverlay">✕ {{ $t('overlay.close')
+                            }}</button>
+                    </div>
+                    <div class="overlay-body">
+                        <p>{{ $t('overlay.body') }}</p>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <img src="./images/tati.svg" alt="" class="corner-art corner-left" aria-hidden="true" loading="lazy">
+        <img src="./images/lenn.svg" alt="" class="corner-art corner-right" aria-hidden="true" loading="lazy">
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/vue-i18n@9/dist/vue-i18n.global.prod.js"></script>
+    <script>
+        (async () => {
+            const { createApp } = Vue;
+            const { createI18n } = VueI18n;
+
+            async function loadMessages() {
+                async function load(lang) {
+                    try {
+                        const res = await fetch(`locales/${lang}.json`, { cache: 'no-store' });
+                        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+                        return await res.json();
+                    } catch (err) {
+                        console.warn(`Could not load locales/${lang}.json:`, err);
+                        return {};
+                    }
+                }
+                const [de, en] = await Promise.all([load('de'), load('en')]);
+                return { de, en };
+            }
+
+            const savedLocale = localStorage.getItem('locale');
+            const browserDefault = navigator.language?.startsWith('de') ? 'de' : 'en';
+            const defaultLocale = savedLocale || browserDefault;
+
+            const messages = await loadMessages();
+
+            const i18n = createI18n({
+                legacy: true,
+                locale: defaultLocale,
+                fallbackLocale: 'en',
+                messages
+            });
+
+            createApp({
+                name: 'App',
+                data() {
+                    return {
+                        i18nReady: false,
+                        showOverlay: false,
+                        captchaError: false
+                    };
+                },
+                computed: {
+                    nextLocale() {
+                        return this.$i18n.locale === 'de' ? 'en' : 'de';
+                    },
+                    nextLocaleLabel() {
+                        return this.$t('switchTo');
+                    }
+                },
+                methods: {
+                    toggleLocale() {
+                        this.$i18n.locale = this.nextLocale;
+                        localStorage.setItem('locale', this.$i18n.locale);
+                        document.documentElement.setAttribute('lang', this.$i18n.locale);
+                    },
+                    openOverlay() {
+                        this.showOverlay = true;
+                        this.$nextTick(() => this.$refs.overlayTitle?.focus());
+                    },
+                    closeOverlay() {
+                        this.showOverlay = false;
+                    },
+                    detectCaptchaLoaded() {
+                        const apiOk = !!window.hcaptcha;
+                        const iframeOk = !!document.querySelector('.h-captcha iframe');
+                        this.captchaError = !(apiOk || iframeOk);
+                    },
+                    attachCaptchaSubmitGuard() {
+                        this.$nextTick(() => {
+                            const form = document.getElementById('gameForm');
+                            if (!form) return;
+                            form.addEventListener('submit', (e) => {
+                                const token = form.querySelector('textarea[name="h-captcha-response"]')?.value;
+                                if (!token) {
+                                    e.preventDefault();
+                                    alert(this.$t('captcha.required'));
+                                }
+                            });
+                        });
+                    }
+                },
+                mounted() {
+                    document.documentElement.setAttribute('lang', this.$i18n.locale);
+                    this.i18nReady = true;
+                    this.$nextTick(() => {
+                        if (!document.querySelector('script[data-w3f-loaded]')) {
+                            const s = document.createElement('script');
+                            s.src = 'https://web3forms.com/client/script.js';
+                            s.async = true;
+                            s.defer = true;
+                            s.setAttribute('data-w3f-loaded', '1');
+                            s.onload = () => {
+                                setTimeout(this.detectCaptchaLoaded, 400);
+                            };
+                            document.body.appendChild(s);
+                        }
+                        setTimeout(this.detectCaptchaLoaded, 1500);
+                    });
+                    window.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && this.showOverlay) this.closeOverlay();
+                    });
+                    this.attachCaptchaSubmitGuard();
+                }
+            })
+                .use(i18n)
+                .mount('#app');
+        })();
+    </script>
+</body>
+
+</html>
