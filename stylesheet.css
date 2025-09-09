@@ -273,6 +273,11 @@ textarea {
     bottom: -2px;
 }
 
+.h-captcha {
+    display: flex;
+    justify-content: center;
+}
+
 @media (max-width: 380px) {
     .card {
         padding: 16px;

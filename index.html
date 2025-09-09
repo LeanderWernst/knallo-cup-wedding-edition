@@ -5,6 +5,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="stylesheet.css">
+    <link rel="icon" type="image/png" href="/images/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/images/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="KnalloCup" />
+    <link rel="manifest" href="/images/favicon/site.webmanifest" />
     <title>Knallo-Cup | Wedding-Edition</title>
 </head>
 
@@ -131,7 +137,9 @@
                     return {
                         i18nReady: false,
                         showOverlay: false,
-                        captchaError: false
+                        captchaError: false,
+                        captchaPollId: null,
+                        captchaPollDeadline: 0
                     };
                 },
                 computed: {
@@ -143,10 +151,58 @@
                     }
                 },
                 methods: {
+                    isCaptchaPresent() {
+                        const apiOk = !!window.hcaptcha;
+                        const iframeOk = !!document.querySelector('.h-captcha iframe');
+                        return apiOk || iframeOk;
+                    },
+                    startCaptchaWatcher({ intervalMs = 300, timeoutMs = 20000 } = {}) {
+                        this.stopCaptchaWatcher();
+                        if (this.isCaptchaPresent()) {
+                            this.captchaError = false;
+                            return;
+                        }
+
+                        this.captchaPollDeadline = Date.now() + timeoutMs;
+                        this.captchaPollId = window.setInterval(() => {
+                            if (this.isCaptchaPresent()) {
+                                this.captchaError = false;
+                                this.stopCaptchaWatcher();
+                                return;
+                            }
+                            if (Date.now() >= this.captchaPollDeadline) {
+                                this.captchaError = true;
+                                this.stopCaptchaWatcher();
+                            }
+                        }, intervalMs);
+                    },
+                    stopCaptchaWatcher() {
+                        if (this.captchaPollId != null) {
+                            clearInterval(this.captchaPollId);
+                            this.captchaPollId = null;
+                        }
+                    },
                     toggleLocale() {
                         this.$i18n.locale = this.nextLocale;
                         localStorage.setItem('locale', this.$i18n.locale);
                         document.documentElement.setAttribute('lang', this.$i18n.locale);
+
+                        const el = document.querySelector('.h-captcha');
+                        if (el) el.setAttribute('data-lang', this.$i18n.locale);
+
+                        this.$nextTick(() => this.startCaptchaWatcher());
+                    },
+                    loadWeb3FormsOnce() {
+                        if (document.querySelector('script[data-w3f-loaded]')) return;
+                        const s = document.createElement('script');
+                        s.src = 'https://web3forms.com/client/script.js';
+                        s.async = true;
+                        s.defer = true;
+                        s.setAttribute('data-w3f-loaded', '1');
+                        s.onload = () => {
+                            this.startCaptchaWatcher();
+                        };
+                        document.body.appendChild(s);
                     },
                     openOverlay() {
                         this.showOverlay = true;
@@ -188,33 +244,25 @@
                 mounted() {
                     document.documentElement.setAttribute('lang', this.$i18n.locale);
                     this.i18nReady = true;
+
                     this.$nextTick(() => {
-                        if (!document.querySelector('script[data-w3f-loaded]')) {
-                            const s = document.createElement('script');
-                            s.src = 'https://web3forms.com/client/script.js';
-                            s.async = true;
-                            s.defer = true;
-                            s.setAttribute('data-w3f-loaded', '1');
-                            s.onload = () => {
-                                setTimeout(this.detectCaptchaLoaded, 400);
-                            };
-                            document.body.appendChild(s);
-                        }
-                        setTimeout(this.detectCaptchaLoaded, 1500);
+                        this.loadWeb3FormsOnce();
+                        this.startCaptchaWatcher({ intervalMs: 300, timeoutMs: 25000 });
                     });
+
                     window.addEventListener('keydown', (e) => {
                         if (e.key === 'Escape' && this.showOverlay) this.closeOverlay();
                     });
-                    this.attachCaptchaSubmitGuard();
+
                     this.adjustBodyPadding();
                     window.addEventListener('resize', this.adjustBodyPadding);
+                    this.attachCaptchaSubmitGuard();
                 },
                 beforeUnmount() {
                     window.removeEventListener('resize', this.adjustBodyPadding);
+                    this.stopCaptchaWatcher();
                 }
-            })
-                .use(i18n)
-                .mount('#app');
+            }).use(i18n).mount('#app');
         })();
     </script>
 </body>
